@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "707892897473",
+    "project_id": "inceptionlab-task",
+    "storage_bucket": "inceptionlab-task.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707892897473:android:97deeda52fa3cc178e1640",
+        "android_client_info": {
+          "package_name": "com.riyas.inceptionlabs_taskapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707892897473-2f9tcgt9safhs42nq5ocvue2l5h0545i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.riyas.inceptionlabs_taskapp",
+            "certificate_hash": "6057713d3a8f7fba28c37495ab023001fe3d5bd6"
+          }
+        },
+        {
+          "client_id": "707892897473-q77jgbsbgodakuvr1e28e8bd4s30es33.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6-U2rkjoyqBSpbg9LRL1hjK_O5CYTnj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707892897473-q77jgbsbgodakuvr1e28e8bd4s30es33.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
