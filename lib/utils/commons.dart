@@ -24,7 +24,7 @@ class Commons {
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
-          height: 200,
+          height: 120,
         ),
         Positioned(
           top: -100,
@@ -45,30 +45,36 @@ class Commons {
             decoration: BoxDecoration(color: Commons.bgLightColor, borderRadius: BorderRadius.circular(100)),
           ),
         ),
-        Positioned(
-            top: 65,
-            left: 30,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(.5),
-                    blurRadius: 2.0, // soften the shadow
-                    spreadRadius: 1.5, //extend the shadow
-                    offset: Offset(
-                      1.0, // Move to right 10  horizontally
-                      1.0, // Move to bottom 10 Vertically
-                    ),
-                  ),
-                ],
-              ),
-              child: Icon(Icons.navigate_before_outlined),
-            ))
+        Positioned(top: 65, left: 30, child: backButton(context))
       ],
+    );
+  }
+
+  static Widget backButton(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(.5),
+              blurRadius: 2.0, // soften the shadow
+              spreadRadius: 1.5, //extend the shadow
+              offset: Offset(
+                1.0, // Move to right 10  horizontally
+                1.0, // Move to bottom 10 Vertically
+              ),
+            ),
+          ],
+        ),
+        child: Icon(Icons.navigate_before_outlined),
+      ),
     );
   }
 

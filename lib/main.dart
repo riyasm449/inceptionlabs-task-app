@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:inceptionlabs_taskapp/utils/auth.dart';
 import 'package:provider/provider.dart';
 
+import '/utils/auth.dart';
+import '/views/register-form.dart';
 import 'utils/app-theme.dart';
 import 'views/home.dart';
 import 'views/login-page.dart';
-import 'views/otp-page.dart';
 import 'views/splash-screen.dart';
 
 void main() async {
@@ -28,10 +28,10 @@ class MyApp extends StatelessWidget {
           theme: appTheme,
           home: SplashScreen(),
           routes: <String, WidgetBuilder>{
-            '/spalsh': (BuildContext context) => SplashScreen(),
+            '/splash': (BuildContext context) => SplashScreen(),
             '/login': (BuildContext context) => LoginPage(),
-            '/otp': (BuildContext context) => OtpPage(),
             '/home': (BuildContext context) => HomePage(),
+            '/register': (BuildContext context) => RegistrationPage(),
           }),
     );
   }

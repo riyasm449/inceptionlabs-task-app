@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
-import '../utils/auth.dart';
-import '../utils/commons.dart';
-import '../utils/phone-number.dart';
+import '/utils/auth.dart';
+import '/utils/commons.dart';
+import '/utils/phone-number.dart';
+import '/utils/timer_button.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -17,7 +19,12 @@ class _LoginPageState extends State<LoginPage> {
   String verificationId;
   AuthProvider _authProvider = AuthProvider();
   bool showLoading = false;
-  void changeNumber(String value) {}
+  bool showOtp = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void setLoading(bool value) {
     setState(() {
@@ -25,30 +32,43 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  void changeCode(String value) async {
+    _authProvider.changeOtp(value);
+    if (value.length == 6) {
+      Future.delayed(const Duration(seconds: 2));
+      _authProvider.signInWithPhoneAuthCredential(_scaffoldKey, context);
+      print('filled');
+    }
+    print(value);
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  TextEditingController otpController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     _authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
         key: _scaffoldKey,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Commons.topBar(context),
-            SizedBox(
-              height: 15,
-            ),
-            if (showLoading)
-              Center(
-                  child: CircularProgressIndicator(
-                backgroundColor: Commons.bgColor,
-              )),
-            if (!showLoading) body()
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Commons.topBar(context),
+              SizedBox(
+                height: 15,
+              ),
+              if (showLoading)
+                Center(
+                    child: CircularProgressIndicator(
+                  backgroundColor: Commons.bgColor,
+                )),
+              if (!showLoading) phoneNumberField()
+            ],
+          ),
         ));
   }
 
-  Widget body() {
+  Widget phoneNumberField() {
     return Column(
       children: [
         Container(
@@ -93,7 +113,6 @@ class _LoginPageState extends State<LoginPage> {
               controller: controller,
               initialCountryCode: 'IN',
               onChanged: (phone) {
-                changeNumber(phone.completeNumber);
                 _authProvider.changePhoneNumber(phone.completeNumber);
               },
             ),
@@ -102,7 +121,51 @@ class _LoginPageState extends State<LoginPage> {
         SizedBox(
           height: 25,
         ),
-        sendOtpButton()
+        showOtp ? otpField() : sendOtpButton()
+      ],
+    );
+  }
+
+  Widget otpField() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: PinFieldAutoFill(
+              controller: otpController,
+              decoration: BoxLooseDecoration(
+                strokeColorBuilder: PinListenColorBuilder(Commons.bgColor, Colors.grey),
+              ),
+              onCodeChanged: changeCode,
+              autofocus: true,
+              codeLength: 6),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'I don\'t receive the code! ',
+              style: TextStyle(color: Colors.grey, fontSize: 15, fontWeight: FontWeight.w800),
+            ),
+            TimerButton(
+              label: "Please Resend",
+              timeOutInSeconds: 30,
+              onPressed: () {
+                setLoading(true);
+                _authProvider.sendOtp(scaffoldkey: _scaffoldKey, context: context);
+                setLoading(false);
+              },
+              buttonType: ButtonType.FlatButton,
+              disabledColor: Colors.red,
+              color: Colors.transparent,
+              disabledTextStyle: new TextStyle(fontSize: 12.0, color: Colors.grey),
+              activeTextStyle: new TextStyle(fontSize: 12.0, color: Commons.bgColor, fontWeight: FontWeight.bold),
+            )
+          ],
+        )
       ],
     );
   }
@@ -111,8 +174,11 @@ class _LoginPageState extends State<LoginPage> {
     return GestureDetector(
       onTap: () async {
         setLoading(true);
-        await _authProvider.sendOtp(scaffoldkey: _scaffoldKey, context: context);
-
+        await _authProvider.sendOtp(scaffoldkey: _scaffoldKey, context: context).then((value) {
+          setState(() {
+            showOtp = value;
+          });
+        });
         setLoading(false);
       },
       child: Container(

@@ -20,10 +20,12 @@ dependencies:
   intl_phone_field: ^2.0.0
   sms_autofill: ^1.2.6
   bottom_navy_bar: ^5.0.0
-
+  timer_button: ^1.0.2
+  flutter_svg: ^0.22.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
 flutter:
   uses-material-design: true

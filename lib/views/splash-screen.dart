@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/commons.dart';
+import '/utils/commons.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -27,14 +27,9 @@ class _SplashScreenState extends State<SplashScreen> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
+            decoration:
+                BoxDecoration(image: DecorationImage(image: AssetImage('assets/images/beef.png'), fit: BoxFit.contain)),
           ),
-          Positioned(
-              bottom: 0,
-              child: Image.asset(
-                'assets/images/bg.PNG',
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.fitWidth,
-              )),
           Positioned(
             top: 40,
             left: 30,

@@ -22,7 +22,7 @@ class AuthProvider extends ChangeNotifier {
     _otp = value;
   }
 
-  void sendOtp({GlobalKey<ScaffoldState> scaffoldkey, BuildContext context}) async {
+  Future<bool> sendOtp({GlobalKey<ScaffoldState> scaffoldkey, BuildContext context}) async {
     print(phoneNumber);
     if (phoneNumber != null) {
       await _auth.verifyPhoneNumber(
@@ -35,27 +35,26 @@ class AuthProvider extends ChangeNotifier {
           scaffoldkey.currentState.showSnackBar(SnackBar(content: Text(verificationFailed.message)));
         },
         codeSent: (verificationId, resendingToken) async {
-          Navigator.pushReplacementNamed(context, '/otp');
           _verificationId = verificationId;
           notifyListeners();
         },
         codeAutoRetrievalTimeout: (verificationId) async {},
       );
+      return true;
     } else {
       scaffoldkey.currentState.showSnackBar(SnackBar(content: Text('Enter the phone number')));
+      return false;
     }
   }
 
-  void signInWithPhoneAuthCredential(GlobalKey<ScaffoldState> scaffoldKey, BuildContext context) async {
+  Future<bool> signInWithPhoneAuthCredential(GlobalKey<ScaffoldState> scaffoldKey, BuildContext context) async {
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: _otp);
-      final authCredential = await _auth.signInWithCredential(credential);
-
-      if (authCredential?.user != null) {
-        Navigator.pushReplacementNamed(context, '/home');
-      }
+      await _auth.signInWithCredential(credential);
+      return true;
     } catch (e) {
       scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(e.message)));
+      return false;
     }
   }
 }

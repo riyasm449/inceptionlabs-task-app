@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:inceptionlabs_taskapp/utils/commons.dart';
+
+import '/utils/commons.dart';
 
 class MenuPage extends StatefulWidget {
   @override

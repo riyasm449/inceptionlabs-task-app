@@ -13,136 +13,43 @@ class PhoneField extends StatefulWidget {
   final TextAlign textAlign;
   final VoidCallback onTap;
 
-  /// {@macro flutter.widgets.editableText.readOnly}
   final bool readOnly;
   final FormFieldSetter<PhoneNumber> onSaved;
-
-  /// {@macro flutter.widgets.editableText.onChanged}
-  ///
-  /// See also:
-  ///
-  ///  * [inputFormatters], which are called before [onChanged]
-  ///    runs and can validate and change ("format") the input value.
-  ///  * [onEditingComplete], [onSubmitted], [onSelectionChanged]:
-  ///    which are more specialized input change notifications.
   final ValueChanged<PhoneNumber> onChanged;
   final ValueChanged<PhoneNumber> onCountryChanged;
   final FormFieldValidator<String> validator;
   final bool autoValidate;
 
-  /// {@macro flutter.widgets.editableText.keyboardType}
+  final Widget suffix;
+
   final TextInputType keyboardType;
 
-  /// Controls the text being edited.
-  ///
-  /// If null, this widget will create its own [TextEditingController].
   final TextEditingController controller;
 
-  /// Defines the keyboard focus for this widget.
-  ///
-  /// The [focusNode] is a long-lived object that's typically managed by a
-  /// [StatefulWidget] parent. See [FocusNode] for more information.
-  ///
-  /// To give the keyboard focus to this widget, provide a [focusNode] and then
-  /// use the current [FocusScope] to request the focus:
-  ///
-  /// ```dart
-  /// FocusScope.of(context).requestFocus(myFocusNode);
-  /// ```
-  ///
-  /// This happens automatically when the widget is tapped.
-  ///
-  /// To be notified when the widget gains or loses the focus, add a listener
-  /// to the [focusNode]:
-  ///
-  /// ```dart
-  /// focusNode.addListener(() { print(myFocusNode.hasFocus); });
-  /// ```
-  ///
-  /// If null, this widget will create its own [FocusNode].
-  ///
-  /// ## Keyboard
-  ///
-  /// Requesting the focus will typically cause the keyboard to be shown
-  /// if it's not showing already.
-  ///
-  /// On Android, the user can hide the keyboard - without changing the focus -
-  /// with the system back button. They can restore the keyboard's visibility
-  /// by tapping on a text field.  The user might hide the keyboard and
-  /// switch to a physical keyboard, or they might just need to get it
-  /// out of the way for a moment, to expose something it's
-  /// obscuring. In this case requesting the focus again will not
-  /// cause the focus to change, and will not make the keyboard visible.
-  ///
-  /// This widget builds an [EditableText] and will ensure that the keyboard is
-  /// showing when it is tapped by calling [EditableTextState.requestKeyboard()].
   final FocusNode focusNode;
 
-  /// {@macro flutter.widgets.editableText.onSubmitted}
-  ///
-  /// See also:
-  ///
-  ///  * [EditableText.onSubmitted] for an example of how to handle moving to
-  ///    the next/previous field when using [TextInputAction.next] and
-  ///    [TextInputAction.previous] for [textInputAction].
   final void Function(String) onSubmitted;
 
-  /// If false the text field is "disabled": it ignores taps and its
-  /// [decoration] is rendered in grey.
-  ///
-  /// If non-null this property overrides the [decoration]'s
-  /// [Decoration.enabled] property.
   final bool enabled;
 
-  /// The appearance of the keyboard.
-  ///
-  /// This setting is only honored on iOS devices.
-  ///
-  /// If unset, defaults to the brightness of [ThemeData.primaryColorBrightness].
   final Brightness keyboardAppearance;
 
-  /// Initial Value for the field.
-  /// This property can be used to pre-fill the field.
   final String initialValue;
 
-  /// 2 Letter ISO Code
   final String initialCountryCode;
 
-  /// List of 2 Letter ISO Codes of countries to show. Defaults to showing the inbuilt list of all countries.
   final List<String> countries;
-
-  /// The decoration to show around the text field.
-  ///
-  /// By default, draws a horizontal line under the text field but can be
-  /// configured to show an icon, label, hint text, and error text.
-  ///
-  /// Specify null to remove the decoration entirely (including the
-  /// extra padding introduced by the decoration to save space for the labels).
-  final InputDecoration decoration;
-
-  /// The style to use for the text being edited.
-  ///
-  /// This text style is also used as the base style for the [decoration].
-  ///
-  /// If null, defaults to the `subtitle1` text style from the current [Theme].
   final TextStyle style;
   final bool showDropdownIcon;
 
   final BoxDecoration dropdownDecoration;
-
-  /// {@macro flutter.widgets.editableText.inputFormatters}
   final List<TextInputFormatter> inputFormatters;
-
-  /// Placeholder Text to Display in Searchbar for searching countries
   final String searchText;
 
-  /// Color of the country code
   final Color countryCodeTextColor;
 
-  /// Color of the drop down arrow
   final Color dropDownArrowColor;
 
-  /// Whether this text field should focus itself if nothing else is already focused.
   final bool autofocus;
 
   TextInputAction textInputAction;
@@ -158,12 +65,12 @@ class PhoneField extends StatefulWidget {
     this.autoValidate = true,
     this.controller,
     this.focusNode,
-    this.decoration,
     this.style,
     this.onSubmitted,
     this.validator,
     this.onChanged,
     this.countries,
+    this.suffix,
     this.onCountryChanged,
     this.onSaved,
     this.showDropdownIcon = true,
@@ -282,9 +189,6 @@ class _PhoneFieldState extends State<PhoneField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
-      alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(horizontal: 10),
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Commons.bgColor, width: 1.5)),
       child: ListTile(
@@ -292,7 +196,7 @@ class _PhoneFieldState extends State<PhoneField> {
           height: 45,
           width: 75,
           alignment: Alignment.center,
-          margin: EdgeInsets.only(bottom: 8),
+          margin: EdgeInsets.symmetric(vertical: 8),
           child: InkWell(
             child: Row(
               children: [
@@ -315,42 +219,37 @@ class _PhoneFieldState extends State<PhoneField> {
             onTap: _changeCountry,
           ),
         ),
-        title: Column(
-          children: [
-            TextFormField(
-              initialValue: widget.initialValue,
-              controller: widget.controller,
-              decoration: InputDecoration(
-                prefixText: '(+${_selectedCountry['dial_code']})',
-                prefixStyle: TextStyle(color: Colors.black),
-                labelText: 'Phone Number',
-                labelStyle: TextStyle(color: Colors.grey),
-                border: InputBorder.none,
-                // floatingLabelBehavior: FloatingLabelBehavior.never,
-                counterText: "",
-                contentPadding: EdgeInsets.symmetric(horizontal: 6),
-              ),
-              style: TextStyle(color: Colors.black),
-              onChanged: (value) {
-                if (widget.onChanged != null)
-                  widget.onChanged(
-                    PhoneNumber(
-                      countryISOCode: _selectedCountry['code'],
-                      countryCode: '+${_selectedCountry['dial_code']}',
-                      number: value,
-                    ),
-                  );
-              },
-              validator: validator,
-              maxLength: _selectedCountry['max_length'],
-              keyboardType: widget.keyboardType,
-              inputFormatters: widget.inputFormatters,
-              enabled: widget.enabled,
-              keyboardAppearance: widget.keyboardAppearance,
-              autofocus: widget.autofocus,
-              textInputAction: widget.textInputAction,
-            ),
-          ],
+        title: TextFormField(
+          initialValue: widget.initialValue,
+          controller: widget.controller,
+          decoration: InputDecoration(
+              prefixText: '(+${_selectedCountry['dial_code']}) ',
+              prefixStyle: TextStyle(color: Colors.black),
+              hintText: 'Phone Number',
+              hintStyle: TextStyle(color: Colors.grey),
+              border: InputBorder.none,
+              suffix: widget.suffix,
+              contentPadding: EdgeInsets.symmetric(horizontal: 6),
+              counterText: ''),
+          style: TextStyle(color: Colors.black),
+          onChanged: (value) {
+            if (widget.onChanged != null)
+              widget.onChanged(
+                PhoneNumber(
+                  countryISOCode: _selectedCountry['code'],
+                  countryCode: '+${_selectedCountry['dial_code']}',
+                  number: value,
+                ),
+              );
+          },
+          validator: validator,
+          maxLength: _selectedCountry['max_length'],
+          keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
+          enabled: widget.enabled,
+          keyboardAppearance: widget.keyboardAppearance,
+          autofocus: widget.autofocus,
+          textInputAction: widget.textInputAction,
         ),
       ),
     );
